@@ -1,0 +1,118 @@
+body{
+    background-color: rgb(214, 227, 240);
+    /*background-image: url("../IMG/bg2.png");*/
+    font-family: 'Montserrat', sans-serif;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.cardItem{
+    background-color: rgb(255, 255, 255);
+    height: min-content;
+    margin-left: 6%;
+    margin-bottom: 0.5%;
+    border-radius: 12px;
+    padding-top: 0%;
+    outline-width: solid 1px rgb(17, 17, 17);
+    outline: solid 1px rgb(17, 17, 17);
+}
+
+.tituloPedido{
+    margin-left: 6%;
+    color:  rgb(17, 17, 17);
+}
+
+.tituloOrden{
+    font-weight: bold;
+    color: rgb(17, 17, 17);
+}
+
+.tituloOrdenForm{
+    font-weight: bold;
+    color: rgb(17, 17, 17);
+    text-align: center;
+}
+
+.cardItem:hover{
+    border-width: 5px;
+}
+
+.tituloCantidad{
+    color: rgb(17, 17, 17);
+    font-size: 150%;
+}
+
+.tituloTotal{
+    color: rgb(17, 17, 17);
+    font-size: 150%;
+}
+.rowHighlights{
+    margin-left: 0.6%;
+}
+
+.rowBotonExpandir{
+    margin-left: 44%;
+    margin-right: 4%;
+}
+.rowBotonExpandir img{
+    height: 4%;
+    width: 4%;
+    transition: height 0.2s,width 0.2s;;
+}
+
+.rowBotonExpandir img:hover{
+    height: 5%;
+    width: 5%;
+    
+}
+
+.rowHeaders{
+    text-align: center;
+    color: rgb(17, 17, 17);
+    font-weight: bold;
+}
+
+.rowProducto{
+    text-align: center;
+    color: rgb(17, 17, 17);
+}
+
+.divisor{
+    color:  rgb(17, 17, 17);
+    margin-left: 9%;
+}
+
+.formOrden{
+    background-color: rgb(255, 255, 255);
+    max-height:90%;
+    overflow-y: scroll;
+    border-radius: 12px;
+    width: 40%;
+    position: fixed;
+    outline: solid 3px rgb(17, 17, 17);
+    margin-left: 60%;
+    transition: max-height 10s;
+    padding-bottom: 1%;
+}
+
+.formInput{
+    height: 30px;
+    font-weight: bold;
+}
+
+.divBtnInsertar{
+    margin-top: 1%;
+    margin-left: 35%;
+}
+
+.tempItem{
+    margin-bottom: 2%;
+}
+
+.rowbotonPagar{
+    margin-left: 34%;
+}
+
+.errlbl{
+    font-size: 8px;
+}

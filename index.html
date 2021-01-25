@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es-mx">
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+    <link rel="stylesheet" href="CSS/Styles.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@next" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="JS/IndexJS.js" defer></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart</title>
+</head>
+<body>
+
+    <h1 class="tituloPedido">Pedidos</h1>
+    <section id="itemsPedido">
+    
+        <!--Card que se crea por cada orden que se haya encontrado en la BD-->
+    <div class="row">
+        <div class="col-lg-7"><!--Lado izquiero de la pantalla (ordenes)-->
+        <div v-for="(orden,index) in Ordenes" :key="index" v-on:click="expandirClick($event,index)"  @mouseleave="expandirRelease($event,orden.number)" class="cardItem col-lg-10 col-sm-10  col-xs-10">
+           <h2 :id="'orden-'+orden.number" class="col-lg-12 tituloOrden">Orden de compra: {{orden.number}}</h2>
+           <div class="row rowHighlights">
+                <p :id="'artOrdenados-'+orden.number" class="col-md-5 col-sm-6 col-lg-6 hidden-xs tituloCantidad">Articulos ordenados: {{orden.items.length}}</p>
+                <p :id="'totalOrden-'+orden.number" class="col-md-6 col-sm-5 col-lg-6 col-xs-12 ml-5 tituloTotal">Total: ${{orden.totals.total}} {{orden.currency}}</p>
+           </div>
+           <!--Inicio de la información detallada de cada producto en la orden(Si no se presiona el botón, esta parte se mantiene oculta)--> 
+            <div v-if="orden.mostrarFront==2" class="row">
+                <div class="row rowHeaders">
+                    <label class="col-lg-3 col-sm-3 col-xs-3">SKU</label>
+                    <label class="col-lg-3 col-sm-3 col-xs-3">NOMBRE</label>
+                    <label class="col-lg-3 col-sm-3 col-xs-3">CANTIDAD</label>
+                    <label class="col-lg-3 col-sm-3 col-xs-3">PRECIO</label>
+                </div>
+                <br>
+                <div  v-for="Producto in orden.items">
+                    <div class="row rowProducto">
+                        <label class="col-lg-3 col-sm-3 col-xs-3">{{Producto.sku}}</label>
+                        <label class="col-lg-3 col-sm-3 col-xs-3">{{Producto.name.split('-')[0]}}</label>
+                        <label class="col-lg-3 col-sm-3 col-xs-3">{{Producto.quantity}}</label>
+                        <label class="col-lg-3 col-sm-3 col-xs-3"> ${{Producto.price}} {{orden.currency}}</label>
+                    </div>
+                    <div class="divisor row">
+                        <hr class="col-xs-10">
+                    </div>
+                </div>
+                <div class="row rowbotonPagar">
+                    <a v-on:click="procederPago($event,orden)" class="btn btn-info col-lg-4">Proceder al pago</a>
+                </div>      
+            </div>
+            <div class="row rowBotonExpandir">
+                <img :id="'expandir-'+orden.number" class="col-4" src="IMG/expand.png">
+           </div> 
+        </div>
+        </div><!--Fin primera columna-->
+        <div class="formOrden col-lg-5 hidden-xs hidden-sm hidden-md">
+            <div v-if="ordenEditando==0">
+                <h2 class="tituloOrdenForm">Orden de compra:</h2>
+                <h2 class="tituloOrdenForm">Paso 1: Seleccione una orden de compra</h2>
+            </div>
+            <div v-else>
+                <h2 :id="'ordenForm-'+ordenEditando" class="tituloOrdenForm">Orden de compra: {{ordenEditando}}</h2>
+                <h3 :id="'ordenForm-'+ordenEditando" class="tituloOrdenForm">Agregar a la orden</h3>
+                <br>
+                <h4 class="tituloOrdenForm">Paso 2: Ingresar datos de los productos:</h4>
+                    <form>
+                        <div class="row">
+                            <input id="tempItem-sku" type="text" placeholder="SKU*" class="col-lg-3 text-center formInput" required>
+                            <input id="tempItem-nombre" type="text" placeholder="Nombre*" class="col-lg-3 text-center formInput" required>
+                            <input id="tempItem-cantidad"  type="text" placeholder="Cantidad*" class="col-lg-3 text-center formInput" required>
+                            <input id="tempItem-precio" type="text" placeholder="Precio*" class="col-lg-3 text-center formInput" required>
+                        </div>
+                        <div class="row">
+                            <label  id="err-sku" class="col-lg-3 errlbl"></label>
+                            <label  id="err-name" class="col-lg-3 errlbl"></label>
+                            <label  id="err-quantity" class="col-lg-3 errlbl"></label>
+                            <label  id="err-price" class="col-lg-3 errlbl"></label>
+                        </div>
+                        <div class="row text-center divBtnInsertar">
+                            <a v-on:click="insertarListaItems($event)" class="col-lg-4 btn btn-info">Insertar</a>
+                        </div>
+                    </form>
+                    <hr>
+                <div v-if="itemsTemp.length!=0">
+                    <h4 v-if="itemsTemp.length==1" class="tituloOrdenForm">Paso 3: Verifique los datos del producto:</h4>
+                    <h4 v-else class="tituloOrdenForm">Paso 2: Verifique los datos de los productos:</h4>
+                    <div class="row rowHeaders">
+                        <label class="col-lg-3">SKU</label>
+                        <label class="col-lg-3">NOMBRE</label>
+                        <label class="col-lg-3">CANTIDAD</label>
+                        <label class="col-lg-3">PRECIO</label>
+                    </div>
+                    <br>
+                    <div v-for="items in itemsTemp" class="row rowProducto">
+                        <label class="col-lg-3 tempItem">{{items.sku}}</label>
+                        <label class="col-lg-3 tempItem">{{items.name}}</label>
+                        <label class="col-lg-3 tempItem">{{items.quantity}}</label>
+                        <label class="col-lg-3 tempItem">{{items.price}}</label>
+                    </div>
+                    <div class="row text-center divBtnInsertar">
+                        <a v-on:click="postListaItems($event)" class="col-lg-4 btn btn-success border-rounded-circle">Agregar a la orden</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>
+    
+        
+    </div>
+</body>
+</html>
